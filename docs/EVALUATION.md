@@ -155,12 +155,16 @@ finding and the most likely real fix (a larger/frontier model, since this
 is a known industry-wide pattern: small quantized local models have
 materially weaker instruction-hierarchy adherence than models like Gemini
 or GPT-4-class APIs under direct adversarial pressure — not something a
-system prompt alone reliably overcomes). This was not re-verified against
-a stronger model in this session for the reason given above (GPU
-contention on this machine made a from-scratch retest with a heavier local
-model impractically slow — see the note added once that test finished, if
-it did, in the git history of this file, or ask for it to be re-run on
-faster hardware / a hosted API key).
+system prompt alone reliably overcomes). This was not re-verified against a stronger model in this session: the
+same isolated test was attempted against the larger locally available
+model (`qwen3.6:27b`) with a 600-second timeout, but it did not return an
+answer in over 10 minutes under this machine's GPU contention (a 17 GB
+model competing for a 12 GB card with another long-running local process)
+and was stopped rather than left running indefinitely. **Inconclusive, not
+negative** — this doesn't confirm or refute the "stronger model" hypothesis,
+it just wasn't testable on this hardware in this session. Re-run
+`qa/runs/` scripts with `OLLAMA_MODEL=qwen3.6:27b` (or a hosted
+Gemini/OpenAI key) on faster hardware to actually test it.
 
 ### PI-009 (encoded payload)
 
