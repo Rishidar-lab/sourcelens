@@ -7,6 +7,7 @@ interface QueryPanelProps {
   response: QueryResponse | null;
   loading: boolean;
   error: string | null;
+  errorCode: string | null;
   config: PublicConfig | null;
   hasDocuments: boolean;
 }
@@ -23,6 +24,7 @@ export function QueryPanel({
   response,
   loading,
   error,
+  errorCode,
   config,
   hasDocuments,
 }: QueryPanelProps) {
@@ -80,9 +82,21 @@ export function QueryPanel({
         </p>
       )}
 
-      {error && (
+      {error && errorCode === "llm_not_configured" && (
+        <div className="sl-answer sl-answer-llm-missing" role="alert">
+          <div className="sl-answer-badge llm-missing">LLM not configured</div>
+          <p className="sl-answer-text">{error}</p>
+          <p className="sl-muted">
+            Retrieval and the evidence gate work without an LLM - set
+            LLM_PROVIDER (and its credentials) in the backend's .env to get
+            generated answers.
+          </p>
+        </div>
+      )}
+
+      {error && errorCode !== "llm_not_configured" && (
         <div className="sl-answer sl-answer-error" role="alert">
-          <div className="sl-answer-badge error">Error</div>
+          <div className="sl-answer-badge error">System error</div>
           <p className="sl-answer-text">{error}</p>
         </div>
       )}

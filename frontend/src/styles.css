@@ -398,6 +398,10 @@ body {
   color: var(--bad);
   background: rgba(248, 113, 113, 0.12);
 }
+.sl-answer-badge.llm-missing {
+  color: var(--text-dim);
+  background: rgba(154, 167, 180, 0.14);
+}
 .sl-answer-text {
   margin: 0;
   line-height: 1.6;
@@ -409,6 +413,9 @@ body {
 }
 .sl-answer-error {
   border-color: rgba(248, 113, 113, 0.3);
+}
+.sl-answer-llm-missing {
+  border-color: var(--border-strong);
 }
 .sl-thinking {
   color: var(--text-dim);

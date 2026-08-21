@@ -6,6 +6,7 @@ export interface QueryState {
   response: QueryResponse | null;
   loading: boolean;
   error: string | null;
+  errorCode: string | null;
 }
 
 export function useQuery() {
@@ -13,17 +14,19 @@ export function useQuery() {
     response: null,
     loading: false,
     error: null,
+    errorCode: null,
   });
 
   const ask = useCallback(async (question: string, topK?: number) => {
-    setState({ response: null, loading: true, error: null });
+    setState({ response: null, loading: true, error: null, errorCode: null });
     try {
       const res = await api.query(question, topK);
-      setState({ response: res, loading: false, error: null });
+      setState({ response: res, loading: false, error: null, errorCode: null });
     } catch (e) {
       const message =
         e instanceof ApiErrorResponse ? e.message : "Query failed.";
-      setState({ response: null, loading: false, error: message });
+      const code = e instanceof ApiErrorResponse ? e.code : null;
+      setState({ response: null, loading: false, error: message, errorCode: code });
     }
   }, []);
 

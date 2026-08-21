@@ -51,6 +51,7 @@ export function Home() {
           response={query.response}
           loading={query.loading}
           error={query.error}
+          errorCode={query.errorCode}
           config={config}
           hasDocuments={docs.documents.length > 0}
         />
