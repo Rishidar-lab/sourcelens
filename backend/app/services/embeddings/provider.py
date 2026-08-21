@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import hashlib
 import math
-import re
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -19,20 +18,9 @@ import numpy as np
 
 from app.core.exceptions import EmbeddingError
 from app.core.logging import get_logger
+from app.core.text import content_tokens
 
 logger = get_logger("sourcelens.embeddings")
-
-_TOKEN_RE = re.compile(r"[a-z0-9]+")
-_STOPWORDS = {
-    "the", "a", "an", "and", "or", "but", "if", "then", "else", "of", "to", "in",
-    "on", "at", "by", "for", "with", "as", "is", "are", "was", "were", "be", "been",
-    "being", "it", "this", "that", "these", "those", "we", "you", "they", "he", "she",
-    "our", "your", "their", "i", "my", "me", "from", "into", "about", "than", "so",
-    "not", "no", "yes", "do", "does", "did", "can", "will", "would", "should", "may",
-    "might", "must", "shall", "there", "here", "what", "which", "who", "whom", "how",
-    "when", "where", "why", "all", "any", "each", "more", "most", "other", "some",
-    "such", "only", "own", "same", "between", "through", "during", "before", "after",
-}
 
 
 class EmbeddingProvider(ABC):
@@ -125,7 +113,7 @@ class DeterministicHashEmbeddingProvider(EmbeddingProvider):
 
     def _vector(self, text: str) -> np.ndarray:
         vec = np.zeros(self._dim, dtype=np.float64)
-        tokens = [t for t in _TOKEN_RE.findall(text.lower()) if t not in _STOPWORDS]
+        tokens = list(content_tokens(text))
         if not tokens:
             return vec
         for tok in tokens:

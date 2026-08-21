@@ -1,0 +1,101 @@
+{
+  "project": "SourceLens",
+  "qa_pack_version": "1.1",
+  "benchmark_version": "1.0",
+  "question_count": 40,
+  "prompt_injection_count": 15,
+  "corpus_document_count": 7,
+  "manifest_scope": "All QA pack files except QA_MANIFEST.json itself, which is self-referential.",
+  "files": [
+    {
+      "relative_path": "CHANGELOG.md",
+      "size_bytes": 2048,
+      "sha256": "26a453975950dff63c94dec54a0d961e747f63a5cf15883dc51a23160e22f13f",
+      "purpose": "Final packaging change record"
+    },
+    {
+      "relative_path": "QA_README.md",
+      "size_bytes": 2388,
+      "sha256": "0b939085edb44ce2bfda7740eb6627912b844f1291f436bd82ed315f162467ed",
+      "purpose": "Operational instructions for the QA pack"
+    },
+    {
+      "relative_path": "SourceLens_Validation_&_Submission_Dossier.md",
+      "size_bytes": 47507,
+      "sha256": "f52e40fe98068ac4481559c026ecaafd40048b96bb83605e04e1c1c22a61182f",
+      "purpose": "Full validation and submission dossier"
+    },
+    {
+      "relative_path": "benchmarks/golden_qa.json",
+      "size_bytes": 35858,
+      "sha256": "958dddc1422296c112e46bf40d0cf705228eb94049eaa630d1e337145bb92194",
+      "purpose": "40-question golden RAG benchmark"
+    },
+    {
+      "relative_path": "benchmarks/prompt_injection_payloads.json",
+      "size_bytes": 6956,
+      "sha256": "803da995d8c85c9eef4b3bbb7cbf34c1dd1ea85c328b40764a4e0d4ad2c1b0f7",
+      "purpose": "15-case prompt-injection red-team dataset"
+    },
+    {
+      "relative_path": "corpus/employee-handbook.md",
+      "size_bytes": 2905,
+      "sha256": "1e91770b4f684090e19987825d6927227e8eaa06f65b9d264e7193a5bb50aa0d",
+      "purpose": "Employee-handbook fixture"
+    },
+    {
+      "relative_path": "corpus/incident-response-policy.md",
+      "size_bytes": 2960,
+      "sha256": "50f1e3fba95f8448dd4dc9995f42796ab152648d6e59e5197e7806c532d0caa1",
+      "purpose": "Incident-response policy fixture"
+    },
+    {
+      "relative_path": "corpus/legacy-remote-policy.md",
+      "size_bytes": 2434,
+      "sha256": "36517081b2465ff8c50d066af11759948b5a960d3e94dafd243ec254ffc498ea",
+      "purpose": "Superseded policy fixture for conflict testing"
+    },
+    {
+      "relative_path": "corpus/prompt-injection-sample.md",
+      "size_bytes": 2783,
+      "sha256": "14430de66b2839fbe8c3a688dcefc0aee70458c05a5399e103e7501ce69aa346",
+      "purpose": "Untrusted prompt-injection fixture"
+    },
+    {
+      "relative_path": "corpus/remote-work-policy.md",
+      "size_bytes": 2847,
+      "sha256": "31bcaae6d9a56ebc44443de07f7d8a645a132273513aafc2eeb5ab4a4a9fcad5",
+      "purpose": "Current remote-work policy fixture"
+    },
+    {
+      "relative_path": "corpus/security-guidelines.md",
+      "size_bytes": 2876,
+      "sha256": "80e180b4461f9375a7d5252536a9703509d48d65a1487c21bc8777a9836c6dea",
+      "purpose": "Security-guidelines fixture"
+    },
+    {
+      "relative_path": "corpus/travel-policy.md",
+      "size_bytes": 2662,
+      "sha256": "b60cb8741562e4f38582de651a3d93828c522e098a9adb1d8506a7f9ac04ff97",
+      "purpose": "Travel-policy fixture"
+    },
+    {
+      "relative_path": "evaluation/benchmark_run_template.json",
+      "size_bytes": 820,
+      "sha256": "47fe028d6341e02acd79d913070be8f84cc45ba01f2670521d13c619a1da9edd",
+      "purpose": "Empty benchmark execution record template"
+    },
+    {
+      "relative_path": "evaluation/citation_audit.csv",
+      "size_bytes": 915,
+      "sha256": "66ba476cf3e1327083c89543dd39e4041f190e4fc59b0ea258967ffe35e476b2",
+      "purpose": "Citation audit worksheet"
+    },
+    {
+      "relative_path": "evaluation/expected_results_template.json",
+      "size_bytes": 31642,
+      "sha256": "2ef0000245f7584850a147977d5c7efb27c752e66db590f3fd9291dca7ee9b88",
+      "purpose": "Machine-readable expected-answer mapping"
+    }
+  ]
+}

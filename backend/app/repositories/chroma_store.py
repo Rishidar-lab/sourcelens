@@ -7,6 +7,8 @@ from typing import Optional
 
 import chromadb
 from chromadb.config import Settings as ChromaSettings
+from chromadb.telemetry.product import ProductTelemetryClient, ProductTelemetryEvent
+from overrides import override
 
 from app.core.constants import CHUNKS_COLLECTION, DOCUMENTS_COLLECTION, UNKNOWN_PAGE
 from app.core.exceptions import VectorStoreError
@@ -14,6 +16,30 @@ from app.core.logging import get_logger
 from app.models.domain import DocumentMeta, RetrievedEvidence
 
 logger = get_logger("sourcelens.vectorstore")
+
+
+class NoOpTelemetryClient(ProductTelemetryClient):
+    """Replaces Chroma's default Posthog telemetry client.
+
+    Chroma 0.5.23 ships pinned to ``posthog>=2.4.0`` with no upper bound. Newer
+    posthog releases (this project pins 7.x) changed the free-function
+    ``posthog.capture(distinct_id, event, properties)`` signature to no longer
+    accept those positional arguments, so Chroma's internal capture call raises
+    ``TypeError: capture() takes 1 positional argument but 3 were given`` on
+    every operation. Chroma catches that exception internally so it never
+    crashes the app, but it floods the logs on every single vector-store call.
+    Setting ``anonymized_telemetry=False`` does NOT prevent this: Chroma still
+    calls ``posthog.capture(...)`` and only relies on posthog's own internals
+    to no-op, which happens *after* the broken call is made.
+
+    This is a local single-user portfolio app with no need for product
+    telemetry, so we swap in a client that never talks to posthog at all,
+    via Chroma's own supported ``chroma_product_telemetry_impl`` setting.
+    """
+
+    @override
+    def capture(self, event: ProductTelemetryEvent) -> None:
+        return None
 
 
 def _to_similarity(distance: float) -> float:
@@ -28,7 +54,12 @@ class ChromaStore:
         try:
             self._client = chromadb.PersistentClient(
                 path=persist_dir,
-                settings=ChromaSettings(anonymized_telemetry=False),
+                settings=ChromaSettings(
+                    anonymized_telemetry=False,
+                    chroma_product_telemetry_impl=(
+                        "app.repositories.chroma_store.NoOpTelemetryClient"
+                    ),
+                ),
             )
             self._chunks = self._client.get_or_create_collection(
                 name=CHUNKS_COLLECTION,
@@ -141,13 +172,22 @@ class ChromaStore:
         top_k: int,
         document_ids: Optional[list[str]] = None,
     ) -> list[RetrievedEvidence]:
+        # Never ask Chroma for more results than can exist. An empty collection
+        # returns a clean "no evidence" result; a small collection is clamped
+        # to its actual size instead of relying on Chroma's own internal
+        # clamp-and-warn behaviour.
+        available = self.count_chunks()
+        if available == 0:
+            return []
+        effective_k = min(top_k, available)
+
         where = None
         if document_ids:
             where = {"document_id": {"$in": document_ids}}
         try:
             res = self._chunks.query(
                 query_embeddings=[embedding],
-                n_results=top_k,
+                n_results=effective_k,
                 where=where,
                 include=["metadatas", "documents", "distances"],
             )

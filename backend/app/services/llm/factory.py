@@ -24,12 +24,16 @@ def build_llm_provider(
     openai_model: str = "gpt-4o-mini",
     ollama_base_url: str = "http://localhost:11434",
     ollama_model: str = "llama3.1",
+    timeout_s: float = 60.0,
 ) -> Optional[LLMProvider]:
     if provider in (None, "none", ""):
         return None
     if provider == "gemini":
         return GeminiProvider(
-            model=gemini_model, api_key=gemini_api_key, base_url=GEMINI_BASE_URL
+            model=gemini_model,
+            api_key=gemini_api_key,
+            base_url=GEMINI_BASE_URL,
+            timeout_s=timeout_s,
         )
     if provider == "openai":
         return OpenAICompatibleProvider(
@@ -37,6 +41,7 @@ def build_llm_provider(
             model=openai_model,
             base_url=openai_base_url,
             api_key=openai_api_key,
+            timeout_s=timeout_s,
         )
     if provider == "ollama":
         return OpenAICompatibleProvider(
@@ -45,5 +50,7 @@ def build_llm_provider(
             base_url=ollama_base_url,
             api_key="ollama",
             path="/v1/chat/completions",
+            requires_key=False,
+            timeout_s=timeout_s,
         )
     raise LLMNotConfiguredError(f"Unknown LLM provider '{provider}'.")

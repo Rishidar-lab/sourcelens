@@ -21,7 +21,7 @@ def sanitize_filename(name: str, max_len: int = 120) -> str:
     cleaned = base
     for ch in UNSAFE_FILENAME_CHARS:
         cleaned = cleaned.replace(ch, "_")
-    cleaned = cleaned.strip("._")
+    cleaned = cleaned.strip().strip("._").strip()
     if not cleaned:
         cleaned = "document"
     if len(cleaned) > max_len:

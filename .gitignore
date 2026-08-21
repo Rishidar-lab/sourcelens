@@ -26,11 +26,16 @@ backend/.env.*
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
+frontend/tsconfig.tsbuildinfo
 npm-debug.log*
 
 # --- QA pack extraction / benchmark run artifacts ---
-qa/runs/*.json
-!qa/runs/.gitkeep
+# Keep summarized JSON results (referenced from docs/EVALUATION.md); never
+# commit the throwaway per-run Chroma vector stores they're built from.
+qa/runs/_chroma_*/
+qa/runs/_data_*/
+qa/runs/_pi_chroma_*/
+qa/runs/_pi_data_*/
 
 # --- OS / editor ---
 .DS_Store

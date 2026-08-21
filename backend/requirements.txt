@@ -1,0 +1,42 @@
+# Core API
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+starlette==0.41.3
+python-multipart==0.0.20
+pydantic==2.10.4
+pydantic-settings==2.7.1
+
+# Vector store
+chromadb==0.5.23
+# chromadb>=0.5 declares `posthog>=2.4.0` with no upper bound. Newer posthog
+# majors (this pin included) changed the signature of the free-function
+# `posthog.capture(distinct_id, event, properties)` that chromadb's telemetry
+# client calls positionally, which raised a TypeError on every vector-store
+# operation ("capture() takes 1 positional argument but 3 were given"),
+# caught internally by chromadb and logged as noise on every request. The
+# actual fix is in code: app/repositories/chroma_store.py registers a no-op
+# telemetry client via Chroma's own `chroma_product_telemetry_impl` setting,
+# so no posthog version fixes or breaks this - it's pinned here only so a
+# fresh install doesn't pull in the correct-but-larger v3+ analytics stack
+# than this local single-user app has any use for.
+posthog==7.42.0
+overrides==7.7.0
+
+# Embeddings
+sentence-transformers==3.3.1
+numpy==2.5.2
+# sentence-transformers pulls in torch as a transitive dependency. The
+# default resolve may select a large CUDA-enabled wheel; for a CPU-only
+# install (no local GPU needed to run SourceLens), install torch first with:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# then `pip install -r requirements.txt`.
+
+# Document parsing
+PyMuPDF==1.24.13
+python-docx==1.1.2
+
+# LLM providers (Gemini / OpenAI-compatible / Ollama all speak HTTP)
+httpx==0.28.1
+
+# Tests
+pytest==8.3.4

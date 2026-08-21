@@ -106,18 +106,25 @@ class OpenAICompatibleProvider(LLMProvider):
         base_url: str,
         api_key: str,
         path: str = "/chat/completions",
+        requires_key: bool = True,
+        timeout_s: float = 60.0,
     ) -> None:
         self.name = name
         self.model = model
         self._url = base_url.rstrip("/") + path
         self._api_key = api_key
+        self._requires_key = requires_key
         self._client = httpx.AsyncClient(
-            timeout=httpx.Timeout(60.0), headers={"Authorization": f"Bearer {api_key}"}
+            timeout=httpx.Timeout(timeout_s), headers={"Authorization": f"Bearer {api_key}"}
         )
 
     @property
     def is_configured(self) -> bool:
-        return bool(self._api_key) and self._api_key not in ("", "ollama")
+        # Ollama (and other local OpenAI-compatible servers) don't need a real
+        # API key - only require one for providers that actually authenticate.
+        if not self._requires_key:
+            return True
+        return bool(self._api_key)
 
     async def complete(self, messages, *, temperature=0.0, max_tokens=1024) -> LLMResult:
         if not self.is_configured:
@@ -152,14 +159,16 @@ class OpenAICompatibleProvider(LLMProvider):
 
 
 class GeminiProvider(LLMProvider):
-    def __init__(self, *, model: str, api_key: str, base_url: str) -> None:
+    def __init__(
+        self, *, model: str, api_key: str, base_url: str, timeout_s: float = 60.0
+    ) -> None:
         self.name = "gemini"
         self.model = model
         self._api_key = api_key
         self._url = (
             f"{base_url.rstrip('/')}/v1beta/models/{model}:generateContent"
         )
-        self._client = httpx.AsyncClient(timeout=httpx.Timeout(60.0))
+        self._client = httpx.AsyncClient(timeout=httpx.Timeout(timeout_s))
 
     @property
     def is_configured(self) -> bool:

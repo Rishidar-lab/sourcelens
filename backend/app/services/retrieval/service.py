@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from app.core.logging import get_logger
+from app.core.text import content_tokens
 from app.models.domain import RetrievedEvidence
 from app.repositories.chroma_store import ChromaStore
 from app.services.embeddings.provider import EmbeddingProvider
@@ -44,12 +45,40 @@ class RetrievalService:
         min_relevance_score: float = 0.20,
         dedup_containment: float = 0.9,
         expand_adjacent: bool = True,
+        zero_overlap_floor: float = 0.35,
     ) -> None:
         self._provider = provider
         self._store = store
         self._min_relevance = min_relevance_score
         self._dedup = dedup_containment
         self._expand = expand_adjacent
+        # Vector search always returns *something*, even when nothing is
+        # actually relevant - the closest chunk in embedding space is not the
+        # same thing as evidence. A chunk that shares zero content words with
+        # the question is held to a materially higher score bar than one that
+        # does, so a stray high-similarity coincidence (embedding noise, hash
+        # collisions in the offline test embedding, etc.) cannot pass as
+        # evidence on its own. Chunks that genuinely paraphrase the question
+        # still pass normally once real semantic embeddings are used, since
+        # true paraphrases score well above this floor.
+        self._zero_overlap_floor = zero_overlap_floor
+
+    def _passes_relevance(
+        self, evidence: RetrievedEvidence, q_tokens: set[str], min_rel: float
+    ) -> bool:
+        if evidence.score < min_rel:
+            return False
+        if evidence.score >= self._zero_overlap_floor:
+            return True
+        # Below the high-confidence floor: only admit it if the chunk shares
+        # multiple meaningful words with the question. A single shared word
+        # is not enough - it is too easy to hit by coincidence (e.g. a
+        # generic term, or the document mentioning the app's own name in an
+        # unrelated aside) without the chunk being topically relevant.
+        if not q_tokens:
+            return True
+        required = min(2, len(q_tokens))
+        return len(q_tokens & content_tokens(evidence.text)) >= required
 
     def retrieve(
         self,
@@ -70,8 +99,11 @@ class RetrievalService:
         raw = self._store.query(query_vec, top_k=top_k, document_ids=document_ids)
         chunks_considered = len(raw)
 
-        # 1. Relevance filter.
-        relevant = [e for e in raw if e.score >= min_rel]
+        # 1. Relevance filter: a score threshold, plus a lexical-overlap
+        # sanity check so "closest available chunk" cannot masquerade as
+        # "relevant chunk" (see PHASE 3 evidence-sufficiency gate).
+        q_tokens = content_tokens(question)
+        relevant = [e for e in raw if self._passes_relevance(e, q_tokens, min_rel)]
         filtered_out = chunks_considered - len(relevant)
 
         # 2. De-duplicate near-identical chunks (overlap produces these).

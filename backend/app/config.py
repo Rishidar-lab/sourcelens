@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     # --- Retrieval / RAG ---
     rag_top_k: int = 5
     rag_min_relevance_score: float = 0.20
+    # A chunk scoring below this floor is only kept as evidence if it also
+    # shares a content word with the question - see RetrievalService.
+    rag_zero_overlap_floor: float = 0.35
     # Similar chunks closer than this cosine distance are de-duplicated.
     rag_dedup_similarity: float = 0.97
     # Expand to adjacent chunks when a mid-chunk boundary is hit.

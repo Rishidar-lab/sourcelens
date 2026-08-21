@@ -55,6 +55,7 @@ def build_container(
         min_relevance_score=settings.rag_min_relevance_score,
         dedup_containment=settings.rag_dedup_similarity,
         expand_adjacent=settings.rag_expand_adjacent,
+        zero_overlap_floor=settings.rag_zero_overlap_floor,
     )
     if llm_provider is None:
         llm_provider = build_llm_provider(
@@ -66,6 +67,7 @@ def build_container(
             openai_model=settings.openai_model,
             ollama_base_url=settings.ollama_base_url,
             ollama_model=settings.ollama_model,
+            timeout_s=settings.llm_request_timeout_s,
         )
     rag = RAGService(
         retrieval,
