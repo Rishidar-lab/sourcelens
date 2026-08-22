@@ -3,6 +3,7 @@ import pytest
 from app.core.exceptions import FileTooLargeError, TooManyFilesError
 from app.services.ingestion.parsers import parse_by_extension
 from app.services.ingestion.service import ingest_file, sanitize_filename
+from app.services.ingestion.validation import validate_upload
 
 
 def test_duplicate_within_batch_is_rejected(document_service):
@@ -68,3 +69,33 @@ def test_damaged_docx_is_rejected_as_corrupt():
     # A .docx is a zip archive; random bytes are not a valid zip/OOXML package.
     with pytest.raises(Exception):
         parse_by_extension(b"not a real docx file", filename="broken.docx", document_id="d", ext=".docx")
+
+
+def test_mime_mismatch_is_logged_not_rejected():
+    # A mismatched (or absent) Content-Type is a soft signal, never a hard
+    # failure - the client-declared MIME type is not trustworthy on its own.
+    # (The ingestion loggers set propagate=False, so `caplog` can't see
+    # them - patch the logger directly instead.)
+    from unittest.mock import patch
+
+    from app.services.ingestion import validation
+
+    with patch.object(validation.logger, "warning") as mock_warning:
+        ext = validate_upload(
+            "policy.pdf", 100, max_bytes=10_000_000, declared_mime="text/plain"
+        )
+    assert ext == ".pdf"
+    mock_warning.assert_called_once()
+    assert mock_warning.call_args.args[0] == "ingestion.mime_mismatch"
+
+
+def test_matching_mime_is_not_logged():
+    from unittest.mock import patch
+
+    from app.services.ingestion import validation
+
+    with patch.object(validation.logger, "warning") as mock_warning:
+        validate_upload(
+            "policy.pdf", 100, max_bytes=10_000_000, declared_mime="application/pdf"
+        )
+    mock_warning.assert_not_called()

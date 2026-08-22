@@ -38,5 +38,6 @@ python-docx==1.1.2
 # LLM providers (Gemini / OpenAI-compatible / Ollama all speak HTTP)
 httpx==0.28.1
 
-# Tests
+# Tests / lint
 pytest==8.3.4
+ruff==0.16.4

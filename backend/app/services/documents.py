@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List, Tuple
 
 from app.core.exceptions import (
     DocumentNotFoundError,
@@ -11,7 +10,6 @@ from app.core.exceptions import (
     VectorStoreError,
 )
 from app.core.logging import get_logger
-from app.models.domain import DocumentMeta
 from app.repositories.chroma_store import ChromaStore
 from app.schemas import DocumentInfo, DocumentListResponse, UploadResult
 from app.services.chunking.chunker import RecursiveChunker
@@ -39,17 +37,25 @@ class DocumentService:
         self._max_files = max_files
 
     def ingest_files(
-        self, files: List[Tuple[str, bytes]]
-    ) -> Tuple[List[UploadResult], List[dict]]:
+        self,
+        files: list[tuple[str, bytes]],
+        *,
+        content_types: dict[str, str] | None = None,
+    ) -> tuple[list[UploadResult], list[dict]]:
         validate_upload_batch([f[0] for f in files], self._max_files)
-        results: List[UploadResult] = []
-        errors: List[dict] = []
+        results: list[UploadResult] = []
+        errors: list[dict] = []
         seen_hashes = set()
+        content_types = content_types or {}
 
         for filename, data in files:
             try:
                 meta, pages = ingest_file(
-                    filename, data, max_bytes=self._max_bytes, seen_hashes=seen_hashes
+                    filename,
+                    data,
+                    max_bytes=self._max_bytes,
+                    seen_hashes=seen_hashes,
+                    declared_mime=content_types.get(filename),
                 )
                 if self._store.document_exists_by_hash(meta.content_hash):
                     raise DuplicateDocumentError(
@@ -96,7 +102,7 @@ class DocumentService:
             raise DocumentNotFoundError(f"Document '{document_id}' was not found.")
         return DocumentInfo(**meta.model_dump())
 
-    def delete_document(self, document_id: str) -> Tuple[int, int]:
+    def delete_document(self, document_id: str) -> tuple[int, int]:
         if self._store.get_document(document_id) is None:
             raise DocumentNotFoundError(f"Document '{document_id}' was not found.")
         try:
@@ -108,7 +114,7 @@ class DocumentService:
 
             raise DeletionError(f"Failed to delete document: {exc}") from exc
 
-    def reset(self) -> Tuple[int, int]:
+    def reset(self) -> tuple[int, int]:
         docs = self._store.count_documents()
         chunks = self._store.count_chunks()
         self._store.reset()

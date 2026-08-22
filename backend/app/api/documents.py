@@ -7,7 +7,6 @@ from fastapi.responses import JSONResponse
 
 from app.api.deps import get_document_service
 from app.core.exceptions import (
-    SourceLensError,
     TooManyFilesError,
     UnsupportedFileTypeError,
 )
@@ -31,10 +30,14 @@ async def upload_documents(
             f"Limit is {docs._max_files}."
         )
     loaded = []
+    content_types: dict[str, str] = {}
     for f in files:
         data = await f.read()
-        loaded.append((f.filename or "unnamed", data))
-    results, errors = docs.ingest_files(loaded)
+        name = f.filename or "unnamed"
+        loaded.append((name, data))
+        if f.content_type:
+            content_types[name] = f.content_type
+    results, errors = docs.ingest_files(loaded, content_types=content_types)
     return UploadResponse(uploaded=len(results), results=results, errors=errors)
 
 

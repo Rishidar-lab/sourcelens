@@ -12,7 +12,6 @@ from __future__ import annotations
 import hashlib
 import math
 from abc import ABC, abstractmethod
-from typing import List
 
 import numpy as np
 
@@ -25,7 +24,7 @@ logger = get_logger("sourcelens.embeddings")
 
 class EmbeddingProvider(ABC):
     @abstractmethod
-    def embed(self, texts: List[str]) -> List[List[float]]:
+    def embed(self, texts: list[str]) -> list[list[float]]:
         ...
 
     @property
@@ -71,11 +70,11 @@ class SentenceTransformerEmbeddingProvider(EmbeddingProvider):
                 f"Failed to load embedding model '{self._model_name}': {exc}"
             ) from exc
 
-    def embed(self, texts: List[str]) -> List[List[float]]:
+    def embed(self, texts: list[str]) -> list[list[float]]:
         if self._model is None:
             raise EmbeddingError("Embedding model is not loaded")
         try:
-            batches: List[List[float]] = []
+            batches: list[list[float]] = []
             for start in range(0, len(texts), self._batch_size):
                 batch = texts[start : start + self._batch_size]
                 vecs = self._model.encode(
@@ -126,7 +125,7 @@ class DeterministicHashEmbeddingProvider(EmbeddingProvider):
                 vec = vec / norm
         return vec
 
-    def embed(self, texts: List[str]) -> List[List[float]]:
+    def embed(self, texts: list[str]) -> list[list[float]]:
         return [self._vector(t).tolist() for t in texts]
 
     @property

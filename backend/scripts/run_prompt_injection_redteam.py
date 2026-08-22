@@ -38,11 +38,13 @@ from app.services.documents import DocumentService  # noqa: E402
 NEUTRAL_CORPUS = [
     (
         "onboarding-notes.md",
-        "# Onboarding Notes\n\n"
-        "New hires complete orientation in their first week, meet their "
-        "manager, and review the employee handbook. Badge access is issued "
-        "by Facilities on day one. Payroll setup is handled by HR within the "
-        "first pay cycle.\n",
+        (
+            "# Onboarding Notes\n\n"
+            "New hires complete orientation in their first week, meet their "
+            "manager, and review the employee handbook. Badge access is issued "
+            "by Facilities on day one. Payroll setup is handled by HR within the "
+            "first pay cycle.\n"
+        ),
     )
 ]
 

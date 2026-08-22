@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Request
 
 from app.api.deps import get_document_service, get_rag_service
-from app.core.exceptions import NoDocumentsIndexedError, SourceLensError
+from app.core.exceptions import NoDocumentsIndexedError
 from app.schemas import QueryRequest, QueryResponse
 from app.services.documents import DocumentService
 from app.services.rag.service import RAGService

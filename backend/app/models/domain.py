@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime, timezone
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -38,7 +37,7 @@ class DocumentMeta(BaseModel):
     chunk_count: int = 0
     status: str = "indexed"
     created_at: str = Field(default_factory=_now)
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class Chunk(BaseModel):

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
 
 from app.core.exceptions import LLMNotConfiguredError
 from app.services.llm.provider import (
@@ -25,7 +24,7 @@ def build_llm_provider(
     ollama_base_url: str = "http://localhost:11434",
     ollama_model: str = "llama3.1",
     timeout_s: float = 60.0,
-) -> Optional[LLMProvider]:
+) -> LLMProvider | None:
     if provider in (None, "none", ""):
         return None
     if provider == "gemini":

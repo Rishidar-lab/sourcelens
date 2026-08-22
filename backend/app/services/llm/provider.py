@@ -11,7 +11,6 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional
 
 import httpx
 
@@ -33,7 +32,7 @@ class LLMResult:
     model: str
     provider: str
     latency_ms: int
-    usage: Optional[dict] = None
+    usage: dict | None = None
 
 
 class LLMProvider(ABC):
@@ -47,7 +46,7 @@ class LLMProvider(ABC):
     @abstractmethod
     async def complete(
         self,
-        messages: List[LLMMessage],
+        messages: list[LLMMessage],
         *,
         temperature: float = 0.0,
         max_tokens: int = 1024,
@@ -66,12 +65,11 @@ class MockLLMProvider(LLMProvider):
     name = "mock"
     model = "mock-v1"
 
-    def __init__(self, *, answer_template: Optional[str] = None) -> None:
+    def __init__(self, *, answer_template: str | None = None) -> None:
         self._template = answer_template
 
     async def complete(self, messages, *, temperature=0.0, max_tokens=1024) -> LLMResult:
         user_msg = next((m for m in messages if m.role == "user"), None)
-        system_msg = next((m for m in messages if m.role == "system"), None)
         user_text = user_msg.content if user_msg else ""
         # The mock is only ever called with grounded evidence present.
         # It must not reveal anything outside the supplied evidence.

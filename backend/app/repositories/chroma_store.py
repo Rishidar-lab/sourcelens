@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 import chromadb
 from chromadb.config import Settings as ChromaSettings
@@ -105,7 +104,7 @@ class ChromaStore:
         except Exception:  # noqa: BLE001
             return False
 
-    def get_document(self, document_id: str) -> Optional[DocumentMeta]:
+    def get_document(self, document_id: str) -> DocumentMeta | None:
         try:
             res = self._docs.get(ids=[document_id], include=["metadatas"])
         except Exception as exc:  # noqa: BLE001
@@ -170,7 +169,7 @@ class ChromaStore:
         embedding: list[float],
         *,
         top_k: int,
-        document_ids: Optional[list[str]] = None,
+        document_ids: list[str] | None = None,
     ) -> list[RetrievedEvidence]:
         # Never ask Chroma for more results than can exist. An empty collection
         # returns a clean "no evidence" result; a small collection is clamped

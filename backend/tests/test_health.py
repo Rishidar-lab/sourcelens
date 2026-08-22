@@ -1,4 +1,3 @@
-from app.core.exceptions import LLMNotConfiguredError
 
 
 def test_health_ok(client_bare):

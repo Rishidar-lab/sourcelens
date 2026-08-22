@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 from app.core.logging import get_logger
 from app.core.text import content_tokens
@@ -85,8 +84,8 @@ class RetrievalService:
         question: str,
         *,
         top_k: int,
-        document_ids: Optional[list[str]] = None,
-        min_relevance_score: Optional[float] = None,
+        document_ids: list[str] | None = None,
+        min_relevance_score: float | None = None,
     ) -> RetrievalResult:
         min_rel = min_relevance_score if min_relevance_score is not None else self._min_relevance
         try:

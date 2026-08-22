@@ -10,6 +10,9 @@ from app.core.exceptions import (
     TooManyFilesError,
     UnsupportedFileTypeError,
 )
+from app.core.logging import get_logger
+
+logger = get_logger("sourcelens.ingestion")
 
 
 def allowed_extension(filename: str) -> str | None:
@@ -35,12 +38,15 @@ def validate_upload(
             f"File '{filename}' is {size_bytes} bytes, exceeding the "
             f"{max_bytes} byte limit."
         )
-    # MIME is a secondary signal only; mismatches are downgraded to a warning
-    # rather than a hard failure because clients often send generic types.
+    # MIME is a secondary signal only: a mismatch is logged, never rejected
+    # here, because clients often send generic types (or none). The actual
+    # gate against a mismatched/corrupt file is content-based parsing.
     if declared_mime and ext in EXPECTED_MIME:
         if declared_mime not in EXPECTED_MIME[ext] and declared_mime != "application/octet-stream":
-            # Non-fatal: log and continue (handled by caller).
-            pass
+            logger.warning(
+                "ingestion.mime_mismatch",
+                extra={"sl_filename": filename, "sl_declared_mime": declared_mime, "sl_ext": ext},
+            )
     return ext
 
 

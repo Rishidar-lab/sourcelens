@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api import documents, query, system
-from app.config import Settings, get_settings
+from app.config import get_settings
 from app.container import Container, build_container
 from app.core.exceptions import SourceLensError
 from app.core.logging import configure_logging, get_logger

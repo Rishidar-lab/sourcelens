@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import time
 import uuid
-from typing import Optional
 
 from app.core.exceptions import LLMNotConfiguredError
 from app.core.logging import get_logger
@@ -31,7 +30,7 @@ class RAGService:
         self,
         retrieval: RetrievalService,
         store: ChromaStore,
-        llm_provider: Optional[LLMProvider],
+        llm_provider: LLMProvider | None,
         *,
         min_relevance_score: float = 0.20,
         llm_temperature: float = 0.0,
@@ -50,8 +49,8 @@ class RAGService:
         self,
         question: str,
         *,
-        document_ids: Optional[list[str]] = None,
-        top_k: Optional[int] = None,
+        document_ids: list[str] | None = None,
+        top_k: int | None = None,
     ) -> QueryResponse:
         start = time.time()
         effective_top_k = top_k or 5

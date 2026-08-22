@@ -7,7 +7,6 @@ fresh temporary Chroma directory is used per test.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest

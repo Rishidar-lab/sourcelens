@@ -8,7 +8,6 @@ carries the original document id, filename, page (where known) and its index.
 from __future__ import annotations
 
 import re
-from typing import List
 
 from app.core.constants import UNKNOWN_PAGE
 from app.core.logging import get_logger
@@ -35,7 +34,7 @@ class RecursiveChunker:
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
 
-    def _split_recursive(self, text: str, seps: List[str]) -> List[str]:
+    def _split_recursive(self, text: str, seps: list[str]) -> list[str]:
         if not text:
             return []
         if len(text) <= self.chunk_size:
@@ -50,7 +49,7 @@ class RecursiveChunker:
             ]
 
         parts = text.split(sep)
-        merged: List[str] = []
+        merged: list[str] = []
         current = ""
         for part in parts:
             candidate = current + (sep if current else "") + part
@@ -63,7 +62,7 @@ class RecursiveChunker:
             merged.append(current)
 
         # If any merged piece is still too large, recurse with a weaker separator.
-        result: List[str] = []
+        result: list[str] = []
         for piece in merged:
             if len(piece) > self.chunk_size and len(seps) > 1:
                 result.extend(self._split_recursive(piece, seps[1:]))
@@ -71,10 +70,10 @@ class RecursiveChunker:
                 result.append(piece)
         return [r for r in result if r.strip()]
 
-    def _with_overlap(self, pieces: List[str]) -> List[str]:
+    def _with_overlap(self, pieces: list[str]) -> list[str]:
         if self.chunk_overlap <= 0 or len(pieces) <= 1:
             return pieces
-        out: List[str] = []
+        out: list[str] = []
         for i, piece in enumerate(pieces):
             if i == 0:
                 out.append(piece)
@@ -88,8 +87,8 @@ class RecursiveChunker:
                 out.append(piece)
         return out
 
-    def chunk_pages(self, pages: List[ExtractedPage]) -> List[Chunk]:
-        chunks: List[Chunk] = []
+    def chunk_pages(self, pages: list[ExtractedPage]) -> list[Chunk]:
+        chunks: list[Chunk] = []
         for page in pages:
             text = normalize_whitespace(page.text)
             if not text:

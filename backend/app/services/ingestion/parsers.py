@@ -10,7 +10,11 @@ from __future__ import annotations
 import io
 
 from app.core.constants import UNKNOWN_PAGE
-from app.core.exceptions import CorruptDocumentError, EmptyDocumentError
+from app.core.exceptions import (
+    CorruptDocumentError,
+    EmptyDocumentError,
+    UnsupportedFileTypeError,
+)
 from app.core.logging import get_logger
 from app.models.domain import ExtractedPage
 

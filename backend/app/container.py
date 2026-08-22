@@ -7,7 +7,6 @@ full pipeline can run without a model download or network access.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 from app.config import Settings
 from app.repositories.chroma_store import ChromaStore
@@ -30,16 +29,16 @@ class Container:
     store: ChromaStore
     retrieval: RetrievalService
     rag: RAGService
-    llm_provider: Optional[LLMProvider]
+    llm_provider: LLMProvider | None
     chunker: RecursiveChunker
 
 
 def build_container(
     settings: Settings,
     *,
-    embedding_provider: Optional[EmbeddingProvider] = None,
-    llm_provider: Optional[LLMProvider] = None,
-    store: Optional[ChromaStore] = None,
+    embedding_provider: EmbeddingProvider | None = None,
+    llm_provider: LLMProvider | None = None,
+    store: ChromaStore | None = None,
 ) -> Container:
     embedding_provider = embedding_provider or build_embedding_provider(
         settings.embedding_model,

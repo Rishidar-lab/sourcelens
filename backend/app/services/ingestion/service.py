@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import os
 
-from app.core.constants import FILE_TYPE_LABEL, UNSAFE_FILENAME_CHARS
+from app.core.constants import UNSAFE_FILENAME_CHARS
 from app.core.exceptions import DuplicateDocumentError
 from app.core.logging import get_logger
 from app.models.domain import DocumentMeta, ExtractedPage, new_id
@@ -40,9 +40,10 @@ def ingest_file(
     *,
     max_bytes: int,
     seen_hashes: set[str] | None = None,
+    declared_mime: str | None = None,
 ) -> tuple[DocumentMeta, list[ExtractedPage]]:
     """Validate and parse a single upload into metadata + extracted pages."""
-    ext = validate_upload(filename, len(data), max_bytes)
+    ext = validate_upload(filename, len(data), max_bytes, declared_mime)
     safe_name = sanitize_filename(filename)
     file_hash = content_hash(data)
 

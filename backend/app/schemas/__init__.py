@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel, Field, field_validator
 
 
@@ -16,7 +14,7 @@ class ErrorResponse(BaseModel):
 
 class ComponentHealth(BaseModel):
     status: str
-    detail: Optional[str] = None
+    detail: str | None = None
 
 
 class HealthResponse(BaseModel):
@@ -26,7 +24,7 @@ class HealthResponse(BaseModel):
     embedding_loaded: bool
     vector_store: str
     llm_configured: bool
-    llm_provider: Optional[str] = None
+    llm_provider: str | None = None
     documents_indexed: int
     chunks_indexed: int
     version: str = "0.1.0"
@@ -35,7 +33,7 @@ class HealthResponse(BaseModel):
 class PublicConfig(BaseModel):
     """Non-sensitive configuration exposed to the frontend."""
 
-    llm_provider: Optional[str]
+    llm_provider: str | None
     llm_configured: bool
     embedding_model: str
     embedding_dim: int
@@ -60,7 +58,7 @@ class DocumentInfo(BaseModel):
     chunk_count: int
     status: str
     created_at: str
-    error: Optional[str] = None
+    error: str | None = None
 
 
 class DocumentListResponse(BaseModel):
@@ -86,7 +84,7 @@ class QueryRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000)
     # Empty list means "search across all indexed documents".
     document_ids: list[str] = Field(default_factory=list)
-    top_k: Optional[int] = None
+    top_k: int | None = None
 
     @field_validator("question")
     @classmethod
@@ -97,7 +95,7 @@ class QueryRequest(BaseModel):
 class Source(BaseModel):
     source_number: int
     filename: str
-    page: Optional[int] = None
+    page: int | None = None
     chunk_id: str
     excerpt: str
     score: float
@@ -106,7 +104,7 @@ class Source(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     grounded: bool
-    refusal_reason: Optional[str] = None
+    refusal_reason: str | None = None
     sources: list[Source]
     retrieval: dict
     request_id: str

@@ -143,11 +143,14 @@ backend is running.
 ## Testing
 
 ```bash
-# Backend: 35 tests covering ingestion, chunking, embeddings, retrieval,
+# Backend: 37 tests covering ingestion, chunking, embeddings, retrieval,
 # the evidence gate, prompt-injection defense, delete-consistency, and
 # ingestion security (path traversal, duplicates, size/count limits,
-# corrupted/fake files).
+# corrupted/fake files, MIME-mismatch logging).
 cd backend && source .venv/bin/activate && python -m pytest -q
+
+# Backend lint (config in backend/pyproject.toml).
+ruff check app/ tests/ scripts/
 
 # Frontend: TypeScript project references + a production build.
 cd frontend && npm run build   # runs `tsc -b && vite build`
