@@ -79,7 +79,38 @@ What this project is actually trying to demonstrate, in order:
 | Frontend | React 18 + TypeScript + Vite |
 | Tests | pytest (backend), `tsc --noEmit` + `vite build` (frontend) |
 
+## Demo
+
+The intended Week-2 walkthrough is documented in [docs/WEEK2_DEMO_SCRIPT.md](docs/WEEK2_DEMO_SCRIPT.md). It demonstrates upload and indexing, a grounded answer with expandable citations, and refusal of an unsupported question. A public recording has not been uploaded yet: **[ADD DEMO VIDEO URL]**. No deployment URL is claimed; this repository is currently positioned as a local-demo submission.
+
+### Verified browser states
+
+These screenshots were captured from the running local application with the synthetic QA corpus. They are evidence of the visible UI states, not a substitute for a public demo recording.
+
+![SourceLens landing state](docs/assets/sourcelens-landing.webp)
+
+![SourceLens indexed corpus](docs/assets/sourcelens-indexed-corpus.webp)
+
+![SourceLens unsupported-question refusal](docs/assets/sourcelens-unsupported-refusal.webp)
+
 ## Architecture
+
+SourceLens separates retrieval from evidence. **Finding the nearest chunk is not enough; the evidence gate decides whether the model is allowed to answer.** Citation provenance is assembled from retrieval records outside model control.
+
+```mermaid
+flowchart TD
+    D[Documents] --> P[Parser]
+    P --> C[Chunker]
+    C --> E[Embeddings]
+    E --> V[(Chroma Vector Store)]
+    V --> R[Retriever]
+    Q[User Question] --> R
+    R --> G{Evidence Sufficiency Gate}
+    G -- insufficient --> F[Grounded Refusal]
+    G -- sufficient --> L[LLM Generation]
+    L --> S[Citation Assembly from Retrieval Records]
+    S --> A[Answer + Sources]
+```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the component diagram
 and [docs/RAG_PIPELINE.md](docs/RAG_PIPELINE.md) for the full
@@ -163,6 +194,10 @@ threat model.
 Full request/response schemas are in `backend/app/schemas/__init__.py` and
 served interactively at `/docs` (FastAPI's built-in Swagger UI) when the
 backend is running.
+
+## Evidence and evaluation
+
+The authoritative measured run is recorded in [docs/EVALUATION.md](docs/EVALUATION.md), with a compact requirement-to-evidence map in [docs/EVIDENCE_LEDGER.md](docs/EVIDENCE_LEDGER.md). The headline figures must be read with their limitations: retrieval-only Recall@1 is 94.12%, Recall@3/5 is 97.06%, and the full real-LLM run completed 21 of 40 questions under shared-GPU timeouts, with 16 of those 21 outcomes judged correct after manual review. The repository also documents an unresolved PI-003-style prompt-injection finding and five generation-quality gaps; these are not presented as fixed.
 
 ## Testing
 
@@ -250,10 +285,11 @@ prompt-injection defenses, secret handling, and known/unresolved findings
   build — see [docs/EVALUATION.md](docs/EVALUATION.md) for the transcripts.
   Automated string matching is a useful first pass, not proof of semantic
   correctness; the QA pack's own instructions say the same thing.
-- **One known, unresolved dependency advisory**: `npm audit` reports a
-  moderate esbuild/Vite dev-server advisory (GHSA-67mh-4wv8-2f99) with no
-  non-breaking fix available at time of writing (Vite 6→8 is a breaking
-  major). It only affects the local dev server, not the production build.
+- **Known, unresolved dependency advisories**: the current `npm audit`
+  reports one moderate esbuild/Vite dev-server advisory and one high-severity
+  Vite advisory, with fixes requiring a breaking Vite upgrade. They affect the
+  local development toolchain rather than the built static assets; they remain
+  documented and were not force-upgraded during submission polish.
 - This project makes **no claim** of zero hallucinations, 100% accuracy, or
   production-ready security hardening. It is a portfolio-scale
   demonstration of grounded-RAG engineering discipline, evaluated honestly.

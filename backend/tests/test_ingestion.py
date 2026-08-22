@@ -16,7 +16,12 @@ def test_txt_ingestion():
 
 
 def test_pdf_ingestion():
-    data = ( __import__("pathlib").Path(__file__).resolve().parent.parent.parent / "samples" / "incident-response-policy.pdf").read_bytes()
+    sample_path = (
+        __import__("pathlib").Path(__file__).resolve().parent.parent.parent
+        / "samples"
+        / "incident-response-policy.pdf"
+    )
+    data = sample_path.read_bytes()
     meta, pages = ingest_file("incident.pdf", data, max_bytes=10_000_000)
     assert any("1 hour" in p.text for p in pages)
 
@@ -24,7 +29,7 @@ def test_pdf_ingestion():
 def test_unsupported_extension():
     try:
         ingest_file("malware.exe", b"x", max_bytes=10_000_000)
-        assert False, "expected UnsupportedFileTypeError"
+        raise AssertionError("expected UnsupportedFileTypeError")
     except UnsupportedFileTypeError:
         pass
 
@@ -32,7 +37,7 @@ def test_unsupported_extension():
 def test_empty_document():
     try:
         ingest_file("empty.txt", b"   \n\t  ", max_bytes=10_000_000)
-        assert False, "expected EmptyDocumentError"
+        raise AssertionError("expected EmptyDocumentError")
     except EmptyDocumentError:
         pass
 
@@ -40,7 +45,7 @@ def test_empty_document():
 def test_corrupt_pdf():
     try:
         parse_by_extension(b"%not a pdf%%%", filename="x.pdf", document_id="d", ext=".pdf")
-        assert False, "expected CorruptDocumentError"
+        raise AssertionError("expected CorruptDocumentError")
     except CorruptDocumentError:
         pass
 

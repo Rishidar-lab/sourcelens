@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-
 from app.core.exceptions import LLMNotConfiguredError
 from app.services.llm.provider import (
     GeminiProvider,

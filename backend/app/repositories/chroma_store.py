@@ -122,7 +122,7 @@ class ChromaStore:
             return []
         return [
             self._meta_from_record(doc_id, meta)
-            for doc_id, meta in zip(res["ids"], res["metadatas"])
+            for doc_id, meta in zip(res["ids"], res["metadatas"], strict=True)
         ]
 
     @staticmethod
@@ -201,7 +201,7 @@ class ChromaStore:
         dists = res["distances"][0]
         metas = res["metadatas"][0]
         docs = res["documents"][0]
-        for cid, dist, meta, text in zip(ids, dists, metas, docs):
+        for cid, dist, meta, text in zip(ids, dists, metas, docs, strict=True):
             out.append(
                 RetrievedEvidence(
                     chunk_id=meta.get("chunk_id", cid),
@@ -227,7 +227,9 @@ class ChromaStore:
         if not res or not res.get("ids"):
             return []
         items = []
-        for cid, meta, text in zip(res["ids"], res["metadatas"], res["documents"]):
+        for cid, meta, text in zip(
+            res["ids"], res["metadatas"], res["documents"], strict=True
+        ):
             items.append(
                 RetrievedEvidence(
                     chunk_id=meta.get("chunk_id", cid),

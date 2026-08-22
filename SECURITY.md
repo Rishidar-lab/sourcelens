@@ -129,14 +129,14 @@ high-severity defect; the test suite guards against it.
   possible to confirm the hypothesis against a stronger model in this
   session (see EVALUATION.md for why).
 
-- **`npm audit`**: 1 moderate advisory (esbuild ≤0.24.2, via Vite ≤6.4.2 —
-  [GHSA-67mh-4wv8-2f99](https://github.com/advisories/GHSA-67mh-4wv8-2f99)).
-  This lets any website send requests to the Vite **dev server** and read
-  the response — it does not affect the production build
-  (`npm run build` output) or any deployed instance, only `npm run dev` on
-  a machine where an attacker can reach the dev server's port. The only
-  available fix (`npm audit fix --force`) is a breaking Vite 6→8 upgrade;
-  left unresolved and documented here rather than force-upgraded blind.
+- **`npm audit`**: the current frontend lockfile reports two unresolved
+  advisories — one moderate esbuild/Vite dev-server issue and one high-severity
+  Vite issue. The reported fixes require a breaking Vite upgrade, so they were
+  not force-applied during submission polish. They concern the development
+  toolchain; `npm run build` still completes successfully, but the dev server
+  should not be exposed to untrusted networks. Re-run `npm audit` before
+  submission because advisory counts can change with the registry.
+
 - **Local LLM (Ollama) traffic is unauthenticated HTTP to localhost** by
   design (that's how Ollama works) — acceptable for a local single-user
   dev setup, not appropriate to expose beyond localhost without adding

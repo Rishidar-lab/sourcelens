@@ -27,7 +27,7 @@ def test_hash_embedding_similarity_signal():
     c = provider.embed([" FIFA world cup champions 2018 "])[0]
 
     def cos(x, y):
-        return sum(i * j for i, j in zip(x, y))
+        return sum(i * j for i, j in zip(x, y, strict=True))
 
     assert cos(a, b) > cos(a, c)
 

@@ -23,7 +23,7 @@ import asyncio
 import json
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -178,7 +178,7 @@ async def main_async(args: argparse.Namespace) -> None:
 
     run_dir = REPO_ROOT / "qa" / "runs"
     run_dir.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
 
     settings = Settings(
         chroma_persist_dir=str(run_dir / f"_pi_chroma_{ts}"),
@@ -222,7 +222,7 @@ async def main_async(args: argparse.Namespace) -> None:
     out = {
         "dataset": data["dataset"],
         "version": data["version"],
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "llm_provider": settings.llm_provider,
         "results": results,
         "summary": {

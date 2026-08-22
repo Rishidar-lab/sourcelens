@@ -30,7 +30,7 @@ import json
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
@@ -285,7 +285,7 @@ async def main_async(args: argparse.Namespace) -> None:
 
     run_dir = REPO_ROOT / "qa" / "runs"
     run_dir.mkdir(parents=True, exist_ok=True)
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     chroma_dir = run_dir / f"_chroma_{ts}"
 
     settings = Settings(
@@ -325,7 +325,7 @@ async def main_async(args: argparse.Namespace) -> None:
     out = {
         "benchmark_version": "1.0",
         "dataset": dataset_name,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "git_commit": git_commit(),
         "embedding_model": settings.embedding_model,
         "llm_provider": settings.llm_provider,
@@ -349,7 +349,11 @@ async def main_async(args: argparse.Namespace) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--retrieval-only", action="store_true", help="Skip LLM calls; evaluate retrieval only.")
+    parser.add_argument(
+        "--retrieval-only",
+        action="store_true",
+        help="Skip LLM calls; evaluate retrieval only.",
+    )
     parser.add_argument("--limit", type=int, default=None, help="Only run the first N questions.")
     parser.add_argument("--category", type=str, default=None, help="Only run questions in this category.")
     parser.add_argument("--out", type=str, default=None, help="Output JSON path.")

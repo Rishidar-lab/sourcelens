@@ -247,7 +247,7 @@ delete-consistency (metadata + vectors both removed).
 ## Frontend
 
 - `npm run build` (`tsc -b && vite build`) — clean, no type errors.
-- `npm audit` — 1 moderate advisory (dev-server-only, see README/SECURITY).
+- `npm audit` — 2 unresolved advisories (one moderate and one high, both in the Vite/esbuild development toolchain; see README/SECURITY).
 - Screenshots captured with a real headless Chromium session at 1440px,
   1024px, 768px, and 390px viewports, zero console errors at any width.
 - Interactive golden-path test in a real browser: the FIFA World Cup
