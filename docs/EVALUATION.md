@@ -103,13 +103,21 @@ which is not a property of SourceLens's code.
 
 ### 5 genuine quality gaps, read honestly
 
+**All 5 are pure generation-layer failures, not retrieval failures**: in
+every case `refused: False`, and the log shows the correct expected
+document(s) were actually retrieved with strong scores and real citations
+(9–13 citations each). The evidence was in the model's context; the
+question is what it did with it. Full root-cause reasoning — with what's
+verified fact vs. what's a hypothesis — is in
+[docs/FAILURE_ANALYSIS.md](FAILURE_ANALYSIS.md); summary:
+
 | ID | Category | What happened |
 |---|---|---|
-| QA-018 | multi_document | Answered from one document only (`incident-response-policy.md`, cited [11]: "report it within 30 minutes"), missing required content from `security-guidelines.md` about handling a company-managed device with an exposed password. A real, thin multi-document synthesis miss — same root cause as the retrieval-only run's `source_match: all` gaps. |
-| QA-022 | partially_answerable | Refused outright ("I couldn't find sufficient evidence..."). Expected behavior was a **partial** answer noting the tax treatment isn't specified and to consult People Operations. This is a real over-refusal on a question that had partial evidence — the gate/generation was more conservative than the ideal behavior. |
-| QA-024 | partially_answerable | Same pattern as QA-022: refused instead of giving the available partial answer with an explicit "exact wording isn't provided" caveat. |
-| QA-031 | conflicting_evidence | Answered confidently from the *current* remote-work policy (three days, correctly) but never surfaced or cited the conflicting *legacy* policy (two days) at all, despite system prompt rule 5 explicitly requiring conflicts to be stated. A real instruction-following miss by this model on this question. |
-| QA-039 | ambiguous | Answered confidently with one interpretation ("30 minutes", the incident-reporting deadline) without recognizing the question was ambiguous (it could also mean the travel-expense reporting deadline, "ten business days") or asking for clarification. |
+| QA-018 | multi_document | All 3 expected documents were retrieved (13 citations) — but the answer used only one fact from one of them ("report within 30 minutes"), never synthesizing in `security-guidelines.md`'s content about the device being company-managed. A thin-synthesis miss, not a retrieval miss. |
+| QA-022 | partially_answerable | Refused outright ("I couldn't find sufficient evidence..."), despite the expected document being retrieved with real citations. Expected behavior was a **partial** answer. The system prompt has no rule instructing hedged partial answers — only a binary "full answer or exact refusal" rule — so this may be as much an unhandled case as a model weakness. |
+| QA-024 | partially_answerable | Same pattern and same likely cause as QA-022. |
+| QA-031 | conflicting_evidence | Both the current and legacy remote-work policies were retrieved and cited (9 citations) — the answer correctly stated the current three-day policy but never surfaced the two-day legacy conflict, despite system prompt rule 5 explicitly requiring conflicts to be stated. Unlike QA-022/024, an on-point instruction exists here and wasn't followed - the sharpest of the 5 findings. |
+| QA-039 | ambiguous | Answered confidently with one interpretation ("30 minutes") without recognizing the question was ambiguous (also plausibly "ten business days," a different deadline). Like QA-022/024, no system-prompt rule currently handles ambiguous questions. |
 
 These are reported as real, measured limitations of the current
 small-local-model configuration — not retrieval bugs, not prompt-injection
