@@ -1,5 +1,8 @@
 # Week 2 submission checklist — SourceLens
 
+Recording package: `submission/week2/recording_shotlist.md` (exact
+commands/URL/inputs/what-must-and-must-not-be-visible).
+
 ## When creating the GitHub repository
 
 - **Suggested description**: "Evidence-grounded document Q&A (RAG) with a
@@ -20,8 +23,8 @@
 - [x] `.env.example` present with no real values; `.env` confirmed untracked
 - [x] No secrets in tracked files (audited — see SECURITY.md)
 - [x] `backend/requirements.txt` present and pinned
-- [ ] Pushed to a public (or reviewer-accessible) GitHub repository —
-      **user action**: this recovery only prepared local commits
+- [x] Pushed to a public GitHub repository:
+      https://github.com/Rishidar-lab/sourcelens
 
 ## Functionality
 
