@@ -37,16 +37,17 @@
 - [x] Delete removes both metadata and vectors (tested end-to-end)
 - [x] Prompt-injection defenses tested against a real LLM with real
       injected documents (see docs/EVALUATION.md)
-- [x] 35/35 backend tests passing
+- [x] 37/37 backend tests passing
 - [ ] Real LLM provider — **user action**: this build ran against a local
       Ollama instance already present on the dev machine; if submitting
       from different hardware, set `LLM_PROVIDER`/credentials in `.env`
 
 ## Evaluation
 
-- [x] 40-question golden benchmark executed (`--retrieval-only` and a real
-      partial LLM run — see docs/EVALUATION.md for exact numbers and what
-      wasn't fully re-run due to shared-GPU latency)
+- [x] 40-question golden benchmark executed both retrieval-only and
+      end-to-end against the real LLM — see docs/EVALUATION.md for exact
+      numbers, including 5 genuine model-quality gaps found and reported
+      honestly (not fixed - documented as real limitations)
 - [x] 15-case prompt-injection red team executed against the real LLM
 - [x] Real metrics recorded with git commit, model, and config metadata —
       no invented numbers
