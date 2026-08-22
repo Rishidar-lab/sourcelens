@@ -1,5 +1,14 @@
 # Week 2 submission checklist — SourceLens
 
+## When creating the GitHub repository
+
+- **Suggested description**: "Evidence-grounded document Q&A (RAG) with a
+  real refusal gate, citation integrity, and a measured benchmark - built
+  for Innovation Hacks Week 2."
+- **Suggested topics**: `rag`, `retrieval-augmented-generation`, `chromadb`,
+  `fastapi`, `react`, `typescript`, `sentence-transformers`, `llm`,
+  `prompt-injection`, `python`
+
 ## Repository
 
 - [x] README complete (what/why/features/stack/setup/API/testing/limitations)
