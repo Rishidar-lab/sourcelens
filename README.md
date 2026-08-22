@@ -26,6 +26,30 @@ SourceLens has to recognize that and refuse rather than paper over it with a
 plausible-sounding answer. See [docs/RAG_PIPELINE.md](docs/RAG_PIPELINE.md)
 for exactly how the evidence-sufficiency gate does this.
 
+## Engineering focus
+
+What this project is actually trying to demonstrate, in order:
+
+- **Evidence-grounded RAG, not chatbot-with-a-document-icon.** The
+  evidence-sufficiency gate is enforced in code — the LLM is
+  architecturally never called when retrieval didn't find something
+  relevant — not left to a prompt instruction alone.
+- **Citation provenance you can trust.** Every citation is built from a
+  real retrieval record (filename, page, chunk id, score); the LLM cannot
+  invent one, because citations are never parsed from its output text.
+- **Adversarially evaluated, not just demoed.** A 15-case prompt-injection
+  red team and a 40-question benchmark were run against the real
+  configured LLM, not simulated — see [docs/EVALUATION.md](docs/EVALUATION.md).
+- **A real, disclosed, unresolved finding, not a hidden one.** The red
+  team surfaced an actual prompt-injection gap that prompt-hardening did
+  not close; it's documented in [SECURITY.md](SECURITY.md) rather than
+  quietly worked around.
+- **Conflict and partial-evidence handling measured, not assumed.** Five
+  real generation-quality gaps were found, root-caused (verified fact vs.
+  hypothesis, explicitly separated), and left unfixed on purpose rather
+  than patched blind days before submission — see
+  [docs/FAILURE_ANALYSIS.md](docs/FAILURE_ANALYSIS.md).
+
 ## Features
 
 - Upload PDF, DOCX, TXT, and Markdown documents (drag-and-drop or file picker)
@@ -233,6 +257,45 @@ prompt-injection defenses, secret handling, and known/unresolved findings
 - This project makes **no claim** of zero hallucinations, 100% accuracy, or
   production-ready security hardening. It is a portfolio-scale
   demonstration of grounded-RAG engineering discipline, evaluated honestly.
+
+## What failed, and what I learned
+
+Real findings from this build, not manufactured for effect. Full detail
+in [docs/EVALUATION.md](docs/EVALUATION.md) and
+[docs/FAILURE_ANALYSIS.md](docs/FAILURE_ANALYSIS.md).
+
+**Chroma/PostHog telemetry stall.** *Observed*: every vector-store call
+logged a caught `TypeError`, and the previous implementation attempt had
+stalled on it. *Diagnosis*: `chromadb==0.5.23`'s telemetry client calls
+`posthog.capture()` positionally against an API the pinned `posthog==7.x`
+no longer supports; `anonymized_telemetry=False` doesn't prevent the call,
+it only suppresses posthog's own send *after* the call already raised.
+*Fix*: a no-op telemetry client registered via Chroma's own
+`chroma_product_telemetry_impl` setting, not a dependency-version gamble.
+*Lesson*: read the actual traceback path through a "swallowed" exception
+before assuming a version pin will fix it — the swallow was masking a
+real, root-causeable bug, not just noise.
+
+**A relevance gate that could be coincidentally defeated.** *Observed*: a
+lexical-overlap safety net (added to stop an unrelated toy-embedding false
+positive) let a low-scoring, genuinely irrelevant chunk through because it
+happened to share one word — the app's own name — with a QA-authoring
+annotation embedded in an unrelated document. *Diagnosis*: a single shared
+word is too easy to hit by coincidence to serve as evidence of relevance.
+*Fix*: require 2+ shared content words below the high-confidence score
+floor. *Lesson*: a safety net added to fix one failure mode needs to be
+re-attacked, not just re-tested against the case that motivated it.
+
+**A confirmed prompt-injection gap that prompt-hardening didn't close.**
+*Observed*: a bare "do not answer, say X" payload embedded in a document
+made the configured local model comply, reproduced in a clean isolated
+test. *Fix attempted*: explicitly hardened the system prompt against this
+exact pattern. *Result*: no change — same isolated test, same failure.
+*Remaining limitation*: open, documented in
+[SECURITY.md](SECURITY.md), most likely a model-capability ceiling rather
+than a prompt-wording problem. *Lesson*: verify a fix by re-running the
+exact failing case, not by re-running the full suite — "37/37 tests still
+pass" would have said nothing about whether this specific gap closed.
 
 ## Future improvements
 
