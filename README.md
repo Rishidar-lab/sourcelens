@@ -81,7 +81,7 @@ What this project is actually trying to demonstrate, in order:
 
 ## Demo
 
-The intended Week-2 walkthrough is documented in [docs/WEEK2_DEMO_SCRIPT.md](docs/WEEK2_DEMO_SCRIPT.md). It demonstrates upload and indexing, a grounded answer with expandable citations, and refusal of an unsupported question. A public recording has not been uploaded yet: **[ADD DEMO VIDEO URL]**. No deployment URL is claimed; this repository is currently positioned as a local-demo submission.
+**Demo video:** https://github.com/Rishidar-lab/sourcelens/releases/tag/week2-demo-v1 — a real walkthrough (documented in [docs/WEEK2_DEMO_SCRIPT.md](docs/WEEK2_DEMO_SCRIPT.md)) showing the indexed knowledge base, a grounded answer with expandable citations, and refusal of an unsupported question. Generation in this recording runs through SourceLens's existing OpenAI-compatible provider path pointed at a local server, after sustained GPU contention repeatedly timed out the documented default (Ollama, `qwen2.5-coder:7b`) — disclosed on screen and in narration. No deployment URL is claimed; this repository is currently positioned as a local-demo submission.
 
 ### Verified browser states
 

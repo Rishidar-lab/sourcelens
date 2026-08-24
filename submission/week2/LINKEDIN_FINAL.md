@@ -1,9 +1,11 @@
 # Week 2 LinkedIn Post — Final Draft (SourceLens)
 
-**Status: content final. Two links are placeholders — fill only when real,
-do not guess them.** Canonical source this was finalized from:
-`docs/WEEK2_LINKEDIN_POST.md` (kept in place; this file is the
-publication-ready copy for the four-week submission set).
+**Status: content final.** The demo video is now real and public (GitHub
+Release `week2-demo-v1`); live deployment and the resulting LinkedIn post
+URL remain placeholders — fill only when real, do not guess them.
+Canonical source this was finalized from: `docs/WEEK2_LINKEDIN_POST.md`
+(kept in place; this file is the publication-ready copy for the four-week
+submission set).
 
 ---
 
@@ -46,7 +48,7 @@ plausible. It's a system that makes evidence, uncertainty, provenance, and
 its own failure modes visible.
 
 GitHub: https://github.com/Rishidar-lab/sourcelens
-Demo video: **[ADD DEMO VIDEO URL AFTER UPLOAD]**
+Demo video: https://github.com/Rishidar-lab/sourcelens/releases/tag/week2-demo-v1
 Live deployment: **[ADD LIVE DEPLOYMENT URL IF USED — none is currently claimed]**
 
 #InnovationHacks #RAG #RetrievalAugmentedGeneration #DocumentAI #FastAPI #React #AIEngineering #PromptInjection
@@ -56,8 +58,8 @@ Live deployment: **[ADD LIVE DEPLOYMENT URL IF USED — none is currently claime
 
 ## Publishing checklist (do not skip)
 
-- [ ] Record the demo per `submission/week2/RECORDING_EXECUTION.md`'s runbook — no video exists yet (see `submission/week2/FINAL_VIDEO_QA.md`).
-- [ ] Replace the demo-video placeholder with the real upload URL — never guess it.
+- [x] Recorded the demo — real Playwright capture of both hero paths (supported query with real grounded generation + citations; unsupported query with deterministic refusal), local TTS narration, burned-in captions. Published as GitHub Release `week2-demo-v1`. The documented default LLM (Ollama, `qwen2.5-coder:7b`) timed out a fourth time under GPU contention before recording; generation instead runs through SourceLens's existing OpenAI-compatible provider path pointed at a local server — unmodified application code, same evidence gate, same citation logic, disclosed on screen ("LLM: openai") and in narration. Do not claim the Ollama/qwen2.5-coder:7b path was demonstrated live in this recording.
+- [x] Replaced the demo-video placeholder with the real, publicly-verified release URL above.
 - [ ] Do not claim PI-003 is fixed, that the system is production-ready, or that it has zero hallucinations — these are explicitly disclaimed in `SECURITY.md` and `docs/EVALUATION.md`.
 - [ ] Verify the retrieval metrics against the current `docs/EVALUATION.md` before publishing (do not let this number drift from the repo).
 - [ ] Do not publish while any link above is still a placeholder.
