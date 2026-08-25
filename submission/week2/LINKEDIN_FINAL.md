@@ -49,7 +49,6 @@ GitHub: https://github.com/Rishidar-lab/sourcelens
 Demo video: https://github.com/Rishidar-lab/sourcelens/releases/tag/week2-demo-v1
 
 #InnovationHacks #RAG #RetrievalAugmentedGeneration #DocumentAI #AIEngineering
-**[ADD OFFICIAL INNOVATION HACKS TAG/HANDLE/URL IF the program specifies one beyond the hashtag]**
 
 ---
 
