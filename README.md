@@ -1,5 +1,7 @@
 # SourceLens
 
+[![CI](https://github.com/Rishidar-lab/sourcelens/actions/workflows/ci.yml/badge.svg)](https://github.com/Rishidar-lab/sourcelens/actions/workflows/ci.yml)
+
 **Evidence-grounded answers from your documents.**
 
 SourceLens is a retrieval-augmented generation (RAG) application: upload PDF,
